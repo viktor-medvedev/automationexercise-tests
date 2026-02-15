@@ -38,7 +38,7 @@ jobs:
 
       - name: Generate Allure report
         if: always()
-        run: mvn -q allure:report
+        run: mvn -q allure:report -Dallure.report.directory=target/allure-report
 
       - name: Upload surefire reports
         if: always()
@@ -51,7 +51,13 @@ jobs:
         if: always()
         uses: actions/upload-pages-artifact@v3
         with:
-          path: target/site/allure-maven-plugin
+          path: target/allure-report
+
+      - name: Debug Allure report folder
+        if: always()
+        run: |
+          ls -la target/allure-report || true
+          test -f target/allure-report/index.html && echo "index.html OK" || (echo "index.html MISSING" && exit 1)          
 
   deploy:
     if: github.ref == 'refs/heads/main'
