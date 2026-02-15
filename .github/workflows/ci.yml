@@ -11,7 +11,7 @@ permissions:
   id-token: write
 
 concurrency:
-  group: "pages"
+  group: "pages-${{ github.ref }}"
   cancel-in-progress: false
 
 jobs:
@@ -36,9 +36,26 @@ jobs:
           API_BASE_URL: https://automationexercise.com
           HEADLESS: "true"
 
-      - name: Generate Allure report
+      - name: Upload allure-results (raw)
         if: always()
-        run: mvn -q allure:report -Dallure.report.directory=target/allure-report
+        uses: actions/upload-artifact@v4
+        with:
+          name: allure-results
+          path: target/allure-results
+
+      - name: Install Allure CLI
+        if: always()
+        run: |
+          curl -fsSL -o allure.tgz https://github.com/allure-framework/allure2/releases/download/2.27.0/allure-2.27.0.tgz
+          tar -xzf allure.tgz
+          echo "$PWD/allure-2.27.0/bin" >> $GITHUB_PATH
+
+      - name: Generate Allure report (CLI)
+        if: always()
+        run: |
+          allure generate target/allure-results -o target/allure-report --clean
+          test -f target/allure-report/index.html || (echo "index.html MISSING" && exit 1)
+          echo "index.html OK"
 
       - name: Upload surefire reports
         if: always()
@@ -47,27 +64,11 @@ jobs:
           name: surefire-reports
           path: target/surefire-reports
 
-      - name: Upload Allure report artifact
+      - name: Upload Allure report artifact (Pages)
         if: always()
         uses: actions/upload-pages-artifact@v3
         with:
           path: target/allure-report
 
-      - name: Debug Allure report folder
-        if: always()
-        run: |
-          ls -la target/allure-report || true
-          test -f target/allure-report/index.html && echo "index.html OK" || (echo "index.html MISSING" && exit 1)          
-
   deploy:
-    if: github.ref == 'refs/heads/main'
-    needs: tests
-    runs-on: ubuntu-latest
-    environment:
-      name: github-pages
-      url: ${{ steps.deployment.outputs.page_url }}
-
-    steps:
-      - name: Deploy to GitHub Pages
-        id: deployment
-        uses: actions/deploy-pages@v4
+    if: github
