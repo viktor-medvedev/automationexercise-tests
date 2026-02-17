@@ -36,20 +36,17 @@ public class ProductsPage extends BasePage {
     }
 
     public ProductsPage open(String baseUrl) {
-        driver.get(baseUrl + "/");
-        click(productsLink);
-
-        // headless: иногда клик срабатывает не сразу — ждём URL
+        driver.get(baseUrl + "/products");
         waitUntilTrue(d -> d.getCurrentUrl().contains("/products"), 10);
-
         return this;
     }
 
+
     public void waitAllProductsVisible() {
-        // более надёжно, чем заголовок
-        waitVisible(productsList);
-        waitVisible(anyViewProduct);
+        waitPresent(productsList);
+        waitPresent(anyViewProduct);
     }
+
 
 
     public void openFirstProduct() {
