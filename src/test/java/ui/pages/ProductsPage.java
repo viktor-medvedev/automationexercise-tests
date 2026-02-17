@@ -19,6 +19,13 @@ public class ProductsPage extends BasePage {
     private final By productInfoBlock = By.cssSelector(".product-information");
     private final By productName = By.cssSelector(".product-information h2");
 
+    private final By searchInput = By.id("search_product");
+    private final By searchButton = By.id("submit_search");
+
+    private final By searchedProductsHeader =
+            By.xpath("//*[contains(translate(normalize-space(.),'abcdefghijklmnopqrstuvwxyz','ABCDEFGHIJKLMNOPQRSTUVWXYZ'),'SEARCHED PRODUCTS')]");
+
+
     public ProductsPage(WebDriver driver) {
         super(driver);
     }
@@ -52,4 +59,21 @@ public class ProductsPage extends BasePage {
     public boolean isProductNameVisible() {
         return isPresent(productName);
     }
+    public ProductsPage search(String query) {
+        type(searchInput, query);
+        click(searchButton);
+        return this;
+    }
+
+    public void waitSearchedProductsVisible() {
+        // заголовок + что есть хотя бы один View Product
+        waitVisible(searchedProductsHeader);
+        waitVisible(anyViewProduct);
+    }
+
+    public boolean hasAnyResults() {
+        return isPresent(anyViewProduct);
+    }
+
+
 }
