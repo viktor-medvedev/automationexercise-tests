@@ -16,6 +16,7 @@ public class LoginPageSmokeTest extends BaseUiTest {
         Assert.assertTrue(page.isLoginBlockVisible(), "Login page did not open properly");
 
         page.login("fake_email_" + System.currentTimeMillis() + "@mail.com", "wrong_password");
+        page.waitForIncorrectCredsError();
 
         Assert.assertTrue(page.isIncorrectCredsErrorVisible(),
                 "Expected error message for invalid credentials");
