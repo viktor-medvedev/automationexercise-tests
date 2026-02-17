@@ -25,6 +25,11 @@ public class ProductsPage extends BasePage {
     private final By searchedProductsHeader =
             By.xpath("//*[contains(translate(normalize-space(.),'abcdefghijklmnopqrstuvwxyz','ABCDEFGHIJKLMNOPQRSTUVWXYZ'),'SEARCHED PRODUCTS')]");
 
+    private final By firstAddToCart = By.xpath("(//a[contains(@class,'add-to-cart')])[1]");
+    private final By continueShoppingBtn = By.xpath("//button[contains(.,'Continue Shopping')]");
+    private final By viewCartLink = By.xpath("//a[contains(.,'View Cart')]");
+
+
 
     public ProductsPage(WebDriver driver) {
         super(driver);
@@ -74,6 +79,22 @@ public class ProductsPage extends BasePage {
     public boolean hasAnyResults() {
         return isPresent(anyViewProduct);
     }
+
+    public ProductsPage addFirstProductToCartAndContinue() {
+        // На странице продукты могут требовать hover, но сайт обычно позволяет клик
+        click(firstAddToCart);
+        waitVisible(continueShoppingBtn);
+        click(continueShoppingBtn);
+        return this;
+    }
+
+    public void openCartFromModal() {
+        // Если нужно сразу в корзину через модалку
+        click(firstAddToCart);
+        waitVisible(viewCartLink);
+        click(viewCartLink);
+    }
+
 
 
 }
