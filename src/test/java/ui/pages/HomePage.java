@@ -5,6 +5,11 @@ import org.openqa.selenium.WebDriver;
 
 public class HomePage extends BasePage {
 
+    private final By subscriptionHeader = By.xpath("//h2[normalize-space()='Subscription']");
+    private final By subscribeEmail = By.id("susbscribe_email");
+    private final By subscribeBtn = By.id("subscribe");
+    private final By subscribeSuccess = By.cssSelector(".alert-success");
+
     private final By loggedInAs =
             By.xpath("//*[contains(text(),'Logged in as')]");
 
@@ -30,5 +35,22 @@ public class HomePage extends BasePage {
 
     public void waitLoggedInAs() {
         waitVisible(loggedInAs);
+    }
+
+    public void scrollToSubscription() {
+        scrollIntoView(subscriptionHeader);
+    }
+
+    public void waitSubscriptionVisible() {
+        waitVisible(subscriptionHeader);
+    }
+
+    public void subscribe(String email) {
+        type(subscribeEmail, email);
+        click(subscribeBtn);
+    }
+
+    public void waitSubscriptionSuccess() {
+        waitVisible(subscribeSuccess);
     }
 }
