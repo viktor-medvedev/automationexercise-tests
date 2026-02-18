@@ -29,6 +29,23 @@ public class ProductsPage extends BasePage {
     private final By continueShoppingBtn = By.xpath("//button[contains(.,'Continue Shopping')]");
     private final By viewCartLink = By.xpath("//a[contains(.,'View Cart')]");
 
+    private final By secondAddToCart = By.xpath("(//a[contains(@class,'add-to-cart')])[2]");
+    private final By cartLink = By.xpath("//a[contains(.,'Cart')]");
+
+    public ProductsPage addSecondProductToCartAndContinue() {
+        click(secondAddToCart);
+        waitVisible(continueShoppingBtn);
+        click(continueShoppingBtn);
+        return this;
+    }
+
+    public void openCart() {
+        click(cartLink);
+        waitUntilTrue(d -> d.getCurrentUrl().contains("/view_cart"), 10);
+    }
+
+
+
 
 
     public ProductsPage(WebDriver driver) {
@@ -91,6 +108,8 @@ public class ProductsPage extends BasePage {
         waitVisible(viewCartLink);
         click(viewCartLink);
     }
+
+
 
 
 
