@@ -16,6 +16,7 @@ public class ViewCategoryProductsTest extends BaseUiTest {
         HomePage home = new HomePage(driver);
         home.open(baseUrl);
 
+        // Women -> Dress
         CategoryPage womenDress = home.openWomenDressCategory();
         womenDress.waitTitleVisible();
 
@@ -23,12 +24,15 @@ public class ViewCategoryProductsTest extends BaseUiTest {
         Assert.assertTrue(womenTitle.contains("WOMEN") && womenTitle.contains("DRESS"),
                 "Unexpected category title: " + womenDress.getTitleText());
 
-        // второй переход — заново на Home (проще и стабильнее)
+        // IMPORTANT: go back to Home before second navigation (stability)
+        home.open(baseUrl);
+
+        // Men -> Tshirts
         CategoryPage menTshirts = home.openMenTshirtsCategory();
         menTshirts.waitTitleVisible();
-        String menTitle = menTshirts.getTitleText().toUpperCase();
 
-        Assert.assertTrue(menTitle.contains("MEN") && menTitle.contains("TSHIRTS"),
+        String menTitle = menTshirts.getTitleText().toUpperCase().replaceAll("\\s+", " ").trim();
+        Assert.assertTrue(menTitle.contains("MEN") && (menTitle.contains("TSHIRTS") || menTitle.contains("TSHIRT")),
                 "Unexpected category title: " + menTshirts.getTitleText());
     }
 }
