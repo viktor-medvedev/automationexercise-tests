@@ -33,10 +33,11 @@ public class VerifyAddressDetailsInCheckoutTest extends BaseUiTest {
         ProductsPage products = new ProductsPage(driver).open(baseUrl);
         products.waitAllProductsVisible();
         products.addFirstProductToCartAndContinue();
-        products.openCart();
 
-        CartPage cart = new CartPage(driver);
+// вместо products.openCart()
+        CartPage cart = new CartPage(driver).open(baseUrl);
         cart.waitCartVisible();
+
 
         CheckoutPage checkout = cart.proceedToCheckout();
         checkout.waitCheckoutVisible();

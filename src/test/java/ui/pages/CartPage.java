@@ -35,8 +35,16 @@ public class CartPage extends BasePage {
     }
 
     public void waitCartVisible() {
-        waitVisible(cartItemsSection);
+        waitUntilTrue(d -> d.getCurrentUrl().contains("/view_cart"), 10);
+
+        waitUntilTrue(d ->
+                        !d.findElements(cartItemsSection).isEmpty()
+                                || !d.findElements(cartTable).isEmpty()
+                                || !d.findElements(emptyCartText).isEmpty(),
+                20
+        );
     }
+
 
     public int getItemsCount() {
         return driver.findElements(cartRows).size();

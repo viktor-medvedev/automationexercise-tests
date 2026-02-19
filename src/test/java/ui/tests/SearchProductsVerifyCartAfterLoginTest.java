@@ -42,10 +42,11 @@ public class SearchProductsVerifyCartAfterLoginTest extends BaseUiTest {
         Assert.assertTrue(products.hasAnyResults(), "Expected search results");
 
         products.addFirstProductToCartAndContinue();
-        products.openCart();
 
-        CartPage cart = new CartPage(driver);
+// Открываем корзину напрямую — стабильнее для CI
+        CartPage cart = new CartPage(driver).open(baseUrl);
         cart.waitCartVisible();
+
         Assert.assertTrue(cart.getItemsCount() >= 1, "Expected at least 1 item in cart before login");
 
         // 4) Login

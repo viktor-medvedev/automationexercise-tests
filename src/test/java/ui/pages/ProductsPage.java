@@ -109,12 +109,12 @@ public class ProductsPage extends BasePage {
 
     // TC12
     public ProductsPage addFirstProductToCartAndContinue() {
-        addProductToCartAndContinue(addProduct1, 1);
+        addProductToCartAndContinue(addProduct1);
         return this;
     }
 
     public ProductsPage addSecondProductToCartAndContinue() {
-        addProductToCartAndContinue(addProduct2, 2);
+        addProductToCartAndContinue(addProduct2);
         return this;
     }
 
@@ -129,17 +129,25 @@ public class ProductsPage extends BasePage {
     // =========================
     // Internal helpers
     // =========================
-    private void addProductToCartAndContinue(By preferredAddBtn, int fallbackIndex1Based) {
-        By target = resolveAddButton(preferredAddBtn, fallbackIndex1Based);
+    private void addProductToCartAndContinue(By addBtn) {
+        clickAddToCart(addBtn);
 
-        clickAddToCart(target);
+        // модалка/кнопка иногда не появляется — ждём коротко
+        boolean canContinue = false;
+        try {
+            waitUntilTrue(d ->
+                            !d.findElements(continueShoppingBtn).isEmpty()
+                                    || !d.findElements(viewCartLink).isEmpty()
+                                    || !d.findElements(modalDialog).isEmpty(),
+                    5
+            );
+            canContinue = !driver.findElements(continueShoppingBtn).isEmpty();
+        } catch (Exception ignored) {}
 
-        // Ждём модалку и кнопку
-        waitVisible(continueShoppingBtn);
-        click(continueShoppingBtn);
-
-        // Важно: дождаться, что оверлей/модалка ушли, иначе следующий add-to-cart не сработает
-        waitModalToClose();
+        if (canContinue) {
+            click(continueShoppingBtn);
+        }
+        // если модалки нет — просто выходим (корзину откроем напрямую в тесте)
     }
 
     /**
@@ -178,24 +186,29 @@ public class ProductsPage extends BasePage {
     }
 
     private void clickAddToCart(By addToCartBtn) {
-        // 1) прокрутить
-        scrollIntoView(addToCartBtn);
+        // дождаться, что элементы Add to cart вообще есть
+        waitUntilTrue(d -> !d.findElements(addToCartBtn).isEmpty(), 10);
 
-        // 2) hover (часто нужно)
+        // взять ПЕРВЫЙ ВИДИМЫЙ элемент по locator
+        WebElement el = driver.findElements(addToCartBtn).stream()
+                .filter(WebElement::isDisplayed)
+                .findFirst()
+                .orElse(driver.findElements(addToCartBtn).get(0));
+
+        // scroll
+        ((JavascriptExecutor) driver).executeScript(
+                "arguments[0].scrollIntoView({block:'center', inline:'nearest'});", el
+        );
+
+        // hover (на всякий случай)
+        try { new Actions(driver).moveToElement(el).perform(); } catch (Exception ignored) {}
+
+        // обычный клик -> если не вышло, JS click
         try {
-            WebElement el = waitPresent(addToCartBtn);
-            new Actions(driver).moveToElement(el).perform();
-        } catch (Exception ignored) {}
-
-        // 3) обычный клик
-        try {
-            click(addToCartBtn);
-            return;
-        } catch (Exception ignored) {}
-
-        // 4) JS fallback
-        WebElement el = waitPresent(addToCartBtn);
-        ((JavascriptExecutor) driver).executeScript("arguments[0].click();", el);
+            el.click();
+        } catch (Exception e) {
+            ((JavascriptExecutor) driver).executeScript("arguments[0].click();", el);
+        }
     }
 
     private void waitModalToClose() {
