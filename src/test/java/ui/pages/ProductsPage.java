@@ -38,6 +38,17 @@ public class ProductsPage extends BasePage {
     private final By brandsBlock = By.cssSelector(".brands_products");
     private final By listingTitle = By.cssSelector("h2.title.text-center");
 
+    private final By writeYourReviewHeader =
+            By.xpath("//*[contains(translate(normalize-space(.),'abcdefghijklmnopqrstuvwxyz','ABCDEFGHIJKLMNOPQRSTUVWXYZ'),'WRITE YOUR REVIEW')]");
+
+    private final By reviewName = By.id("name");
+    private final By reviewEmail = By.id("email");
+    private final By reviewText = By.id("review");
+    private final By submitReviewBtn = By.id("button-review");
+    private final By reviewSuccess =
+            By.xpath("//*[contains(.,'Thank you for your review')]");
+
+
 
     public ProductsPage(WebDriver driver) {
         super(driver);
@@ -224,4 +235,23 @@ public class ProductsPage extends BasePage {
     public String getListingTitle() {
         return waitVisible(listingTitle).getText().trim();
     }
+
+    public void waitReviewBlockVisible() {
+        waitVisible(writeYourReviewHeader);
+        waitVisible(reviewName);
+        waitVisible(reviewEmail);
+        waitVisible(reviewText);
+    }
+
+    public void submitReview(String name, String email, String text) {
+        type(reviewName, name);
+        type(reviewEmail, email);
+        type(reviewText, text);
+        click(submitReviewBtn);
+    }
+
+    public void waitReviewSuccess() {
+        waitVisible(reviewSuccess);
+    }
+
 }
