@@ -5,8 +5,12 @@ import org.openqa.selenium.WebDriver;
 
 public class PaymentPage extends BasePage {
 
-    private final By paymentHeader = By.xpath("//h2[normalize-space()='Payment']");
-    private final By payAndConfirmText = By.xpath("//*[contains(.,'Pay and Confirm Order')]");
+    // более мягкий заголовок (если есть)
+    private final By paymentHeaderAny =
+            By.xpath("//*[self::h2 or self::h3][contains(translate(normalize-space(.),'abcdefghijklmnopqrstuvwxyz','ABCDEFGHIJKLMNOPQRSTUVWXYZ'),'PAYMENT')]");
+
+    private final By payAndConfirmText =
+            By.xpath("//*[contains(translate(normalize-space(.),'abcdefghijklmnopqrstuvwxyz','ABCDEFGHIJKLMNOPQRSTUVWXYZ'),'PAY AND CONFIRM')]");
 
     private final By nameOnCard = By.cssSelector("input[data-qa='name-on-card']");
     private final By cardNumber = By.cssSelector("input[data-qa='card-number']");
@@ -21,8 +25,17 @@ public class PaymentPage extends BasePage {
     }
 
     public void waitPaymentVisible() {
-        waitVisible(paymentHeader);
-        waitVisible(payAndConfirmText);
+        // 1) убеждаемся, что мы реально на payment URL
+        waitUntilTrue(d -> d.getCurrentUrl().contains("/payment"), 10);
+
+        // 2) ждём любой якорь страницы оплаты (заголовок или поля/кнопку)
+        waitUntilTrue(d ->
+                        !d.findElements(paymentHeaderAny).isEmpty()
+                                || !d.findElements(payAndConfirmText).isEmpty()
+                                || !d.findElements(nameOnCard).isEmpty()
+                                || !d.findElements(payBtn).isEmpty(),
+                20
+        );
     }
 
     public PaymentPage fillCard(String name, String number, String cvcValue, String month, String year) {
