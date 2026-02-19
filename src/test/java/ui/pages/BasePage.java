@@ -44,6 +44,10 @@ public abstract class BasePage {
         );
     }
 
+    protected void scrollToBottom() {
+        ((JavascriptExecutor) driver).executeScript("window.scrollTo(0, document.body.scrollHeight);");
+    }
+
     protected void type(By locator, String text) {
         WebElement el = waitVisible(locator);
         scrollIntoView(locator);

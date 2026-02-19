@@ -9,21 +9,24 @@ public class CartPage extends BasePage {
     private final By cartTable = By.id("cart_info_table");
     private final By cartRows = By.cssSelector("#cart_info_table tbody tr");
     private final By firstItemQty = By.cssSelector("#cart_info_table tbody tr:first-child .cart_quantity button");
-
+    private final By subscriptionHeader = By.xpath("//h2[normalize-space()='Subscription']");
+    private final By subscribeEmail = By.id("susbscribe_email");
+    private final By subscribeBtn = By.id("subscribe");
+    private final By subscribeSuccess = By.cssSelector(".alert-success");
+    private final By cartItemsSection = By.cssSelector("section#cart_items");
 
     public CartPage(WebDriver driver) {
         super(driver);
     }
 
     public CartPage open(String baseUrl) {
-        driver.get(baseUrl + "/");
-        click(cartLink);
+        driver.get(baseUrl + "/view_cart");
         waitUntilTrue(d -> d.getCurrentUrl().contains("/view_cart"), 10);
         return this;
     }
 
     public void waitCartVisible() {
-        waitVisible(cartTable);
+        waitVisible(cartItemsSection);
     }
 
     public int getItemsCount() {
@@ -34,5 +37,23 @@ public class CartPage extends BasePage {
         String text = waitVisible(firstItemQty).getText().trim();
         return Integer.parseInt(text);
     }
+
+    public void scrollToSubscription() {
+        scrollToBottom();
+    }
+
+    public void waitSubscriptionVisible() {
+        waitVisible(subscriptionHeader);
+    }
+
+    public void subscribe(String email) {
+        type(subscribeEmail, email);
+        click(subscribeBtn);
+    }
+
+    public void waitSubscriptionSuccess() {
+        waitVisible(subscribeSuccess);
+    }
+
 
 }
