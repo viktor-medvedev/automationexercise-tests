@@ -10,6 +10,9 @@ public class OrderPlacedPage extends BasePage {
 
     private final By continueBtn = By.cssSelector("a[data-qa='continue-button']");
 
+    private final By downloadInvoiceBtn = By.xpath("//a[contains(.,'Download Invoice')]");
+
+
     public OrderPlacedPage(WebDriver driver) {
         super(driver);
     }
@@ -21,4 +24,10 @@ public class OrderPlacedPage extends BasePage {
     public void clickContinue() {
         click(continueBtn);
     }
+
+    public InvoicePage openInvoiceSection() {
+        waitVisible(downloadInvoiceBtn);
+        return new InvoicePage(driver);
+    }
+
 }
