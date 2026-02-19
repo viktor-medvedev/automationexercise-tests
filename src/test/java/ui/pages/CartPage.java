@@ -14,6 +14,7 @@ public class CartPage extends BasePage {
     private final By subscribeBtn = By.id("subscribe");
     private final By subscribeSuccess = By.cssSelector(".alert-success");
     private final By cartItemsSection = By.cssSelector("section#cart_items");
+    private final By proceedToCheckoutBtn = By.xpath("//a[contains(.,'Proceed To Checkout')]");
 
     public CartPage(WebDriver driver) {
         super(driver);
@@ -53,6 +54,12 @@ public class CartPage extends BasePage {
 
     public void waitSubscriptionSuccess() {
         waitVisible(subscribeSuccess);
+    }
+
+    public CheckoutPage proceedToCheckout() {
+        click(proceedToCheckoutBtn);
+        waitUntilTrue(d -> d.getCurrentUrl().contains("/checkout"), 10);
+        return new CheckoutPage(driver);
     }
 
 
