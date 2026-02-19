@@ -21,6 +21,10 @@ public class CheckoutPage extends BasePage {
     // Place Order button
     private final By placeOrderBtn = By.xpath("//a[contains(normalize-space(.),'Place Order')]");
 
+    private final By deliveryAddressBlock = By.id("address_delivery");
+    private final By billingAddressBlock = By.id("address_invoice");
+
+
     public CheckoutPage(WebDriver driver) {
         super(driver);
     }
@@ -74,5 +78,14 @@ public class CheckoutPage extends BasePage {
             return href;
         }
     }
+
+    public String getDeliveryAddressText() {
+        return waitVisible(deliveryAddressBlock).getText();
+    }
+
+    public String getBillingAddressText() {
+        return waitVisible(billingAddressBlock).getText();
+    }
+
 
 }
