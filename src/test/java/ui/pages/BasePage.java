@@ -50,6 +50,10 @@ public abstract class BasePage {
         ((JavascriptExecutor) driver).executeScript("window.scrollTo(0, document.body.scrollHeight);");
     }
 
+    public void scrollToTopPage() {
+        ((JavascriptExecutor) driver).executeScript("window.scrollTo(0, 0);");
+    }
+
     protected void type(By locator, String text) {
         WebElement el = waitVisible(locator);
         scrollIntoView(locator);
