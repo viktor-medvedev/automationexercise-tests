@@ -47,6 +47,7 @@ public class ProductsPage extends BasePage {
     private final By submitReviewBtn = By.id("button-review");
     private final By reviewSuccess =
             By.xpath("//*[contains(.,'Thank you for your review')]");
+    private final By closeModalBtn = By.cssSelector("button.close-modal");
 
 
 
@@ -132,23 +133,24 @@ public class ProductsPage extends BasePage {
     private void addProductToCartAndContinue(By addBtn) {
         clickAddToCart(addBtn);
 
-        // модалка/кнопка иногда не появляется — ждём коротко
-        boolean canContinue = false;
-        try {
-            waitUntilTrue(d ->
-                            !d.findElements(continueShoppingBtn).isEmpty()
-                                    || !d.findElements(viewCartLink).isEmpty()
-                                    || !d.findElements(modalDialog).isEmpty(),
-                    5
-            );
-            canContinue = !driver.findElements(continueShoppingBtn).isEmpty();
-        } catch (Exception ignored) {}
+        // ждём, что появится либо модалка, либо ссылка View Cart (обычно обе)
+        waitUntilTrue(d ->
+                        !d.findElements(modalDialog).isEmpty()
+                                || !d.findElements(viewCartLink).isEmpty(),
+                5
+        );
 
-        if (canContinue) {
-            click(continueShoppingBtn);
+        // если появилось всплывающее окно — закрываем его (это и есть "Continue Shopping")
+        if (!driver.findElements(closeModalBtn).isEmpty()) {
+            jsClick(closeModalBtn);
+            waitUntilTrue(d -> d.findElements(modalDialog).isEmpty(), 10);
+            waitUntilTrue(d -> d.findElements(modalBackdrop).isEmpty(), 10);
         }
-        // если модалки нет — просто выходим (корзину откроем напрямую в тесте)
+
+        // возвращаемся наверх, чтобы были видны кнопки меню
+        scrollToTopPage();
     }
+
 
     /**
      * Пытаемся кликать по стабильному селектору data-product-id.
@@ -265,6 +267,20 @@ public class ProductsPage extends BasePage {
 
     public void waitReviewSuccess() {
         waitVisible(reviewSuccess);
+    }
+
+    private void closeAddToCartPopupIfAppears() {
+        // если всплывающего окна нет — ничего не делаем
+        if (driver.findElements(modalDialog).isEmpty()) return;
+
+        // если есть кнопка закрыть — нажимаем
+        if (!driver.findElements(closeModalBtn).isEmpty()) {
+            jsClick(closeModalBtn);
+        }
+
+        // ждём что всплывашка и затемнение исчезнут
+        waitUntilTrue(d -> d.findElements(modalDialog).isEmpty(), 10);
+        waitUntilTrue(d -> d.findElements(modalBackdrop).isEmpty(), 10);
     }
 
 }

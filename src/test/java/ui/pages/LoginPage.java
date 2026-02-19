@@ -20,6 +20,9 @@ public class LoginPage extends BasePage {
     private final By signupEmailInput = By.cssSelector("input[data-qa='signup-email']");
     private final By signupButton = By.cssSelector("button[data-qa='signup-button']");
 
+    // Post-login indicator (sometimes easier than "Logged in as")
+    private final By logoutLink = By.xpath("//a[contains(.,'Logout')]");
+
     public LoginPage(WebDriver driver) {
         super(driver);
     }
@@ -33,10 +36,30 @@ public class LoginPage extends BasePage {
         return isPresent(loginHeader);
     }
 
+
     public LoginPage login(String email, String password) {
+        waitVisible(emailInput);
+        waitVisible(passwordInput);
+
         type(emailInput, email);
         type(passwordInput, password);
-        click(loginButton);
+
+        String beforeUrl = driver.getCurrentUrl();
+
+        try {
+            click(loginButton);
+        } catch (Exception e) {
+            jsClick(loginButton);
+        }
+
+        // Wait: page changed OR we are logged in OR we see an error
+        waitUntilTrue(d ->
+                        !d.getCurrentUrl().equals(beforeUrl)
+                                || !d.findElements(logoutLink).isEmpty()
+                                || !d.findElements(incorrectCredsError).isEmpty(),
+                15
+        );
+
         return this;
     }
 

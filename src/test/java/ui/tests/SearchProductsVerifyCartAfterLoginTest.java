@@ -4,7 +4,11 @@ import config.TestConfig;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 import ui.base.BaseUiTest;
-import ui.pages.*;
+import ui.pages.CartPage;
+import ui.pages.HomePage;
+import ui.pages.LoginPage;
+import ui.pages.ProductsPage;
+import ui.pages.SignupPage;
 import utils.TestData;
 
 public class SearchProductsVerifyCartAfterLoginTest extends BaseUiTest {
@@ -12,51 +16,53 @@ public class SearchProductsVerifyCartAfterLoginTest extends BaseUiTest {
     @Test
     public void searchProductsAndVerifyCartAfterLogin() {
         String baseUrl = TestConfig.baseUrl();
+
+        // 1) Create account (so login definitely works)
         String email = TestData.uniqueEmail();
         String password = TestData.password();
 
-        // 1) Register user
-        LoginPage loginPage = new LoginPage(driver).open(baseUrl);
-        SignupPage signup = loginPage.startSignup(TestData.name(), email);
+        LoginPage login = new LoginPage(driver).open(baseUrl);
+        SignupPage signup = login.startSignup(TestData.name(), email);
 
         signup.waitForAccountInfoOrError();
-        Assert.assertFalse(signup.isEmailExistsErrorVisible(), "Unexpected: email already exists: " + email);
+        Assert.assertFalse(signup.isEmailExistsErrorVisible(),
+                "Signup failed: email already exists. email=" + email);
 
         signup.fillAccountInfo(password)
                 .fillAddressInfo()
-                .createAccount()
-                .waitForContinueButton();
+                .createAccount();
 
+        signup.waitForContinueButton();
         signup.clickContinue();
 
-        // 2) Logout
-        HomePage home = new HomePage(driver).open(baseUrl);
+        HomePage home = new HomePage(driver);
+        home.waitLoggedInAs();   // у тебя есть алиас на waitLoggedInAsVisible()
         home.logout();
 
-        // 3) Search product and add to cart
+        // 2) Guest: search + add to cart
         ProductsPage products = new ProductsPage(driver).open(baseUrl);
-        products.waitAllProductsVisible();
-
         products.search("Top");
         products.waitSearchedProductsVisible();
-        Assert.assertTrue(products.hasAnyResults(), "Expected search results");
 
         products.addFirstProductToCartAndContinue();
 
-// Открываем корзину напрямую — стабильнее для CI
-        CartPage cart = new CartPage(driver).open(baseUrl);
-        cart.waitCartVisible();
+        // 3) Check cart has items before login
+        CartPage cartBeforeLogin = new CartPage(driver).open(baseUrl);
+        cartBeforeLogin.waitCartVisible();
+        Assert.assertTrue(cartBeforeLogin.getItemsCount() >= 1, "Cart should have items before login");
 
-        Assert.assertTrue(cart.getItemsCount() >= 1, "Expected at least 1 item in cart before login");
+        // 4) Login and check cart keeps items
+        HomePage header = new HomePage(driver);
+        header.openSignupLogin();
 
-        // 4) Login
-        loginPage = new LoginPage(driver).open(baseUrl);
-        loginPage.login(email, password);
+        new LoginPage(driver).login(email, password);
 
-        // 5) Verify cart still has items after login
-        cart = new CartPage(driver).open(baseUrl);
-        cart.waitCartVisible();
+        HomePage afterLogin = new HomePage(driver);
+        afterLogin.waitLoggedInAs();
 
-        Assert.assertTrue(cart.getItemsCount() >= 1, "Cart should keep items after login");
+        CartPage cartAfterLogin = afterLogin.openCartFromHeader();
+        cartAfterLogin.waitCartVisible();
+
+        Assert.assertTrue(cartAfterLogin.getItemsCount() >= 1, "Cart should keep items after login");
     }
 }

@@ -87,5 +87,10 @@ public class CartPage extends BasePage {
         waitUntilTrue(d -> d.findElements(cartRows).isEmpty(), 10);
     }
 
+    public boolean waitUntilHasItems(int minItems) {
+        return waitUntilTrue(d -> d.findElements(cartRows).size() >= minItems, 15);
+    }
+
+
 
 }
