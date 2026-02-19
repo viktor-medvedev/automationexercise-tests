@@ -54,8 +54,40 @@ public class PaymentPage extends BasePage {
     }
 
     public void waitPaymentVisible() {
-        waitPaymentFormReady();
+        String origin = getOrigin();
+
+        for (int i = 0; i < 3; i++) {
+            // если мы не на /payment — идём напрямую
+            if (!driver.getCurrentUrl().contains("/payment")) {
+                driver.get(origin + "/payment");
+            }
+
+            // ждём появления полей коротко
+            try {
+                waitUntilTrue(d -> !d.findElements(nameOnCard).isEmpty(), 5);
+                waitUntilTrue(d -> !d.findElements(cardNumber).isEmpty(), 5);
+                return; // всё ок
+            } catch (Exception ignored) {
+                driver.navigate().refresh();
+            }
+        }
+
+        throw new AssertionError("Payment form not loaded. URL=" + driver.getCurrentUrl()
+                + " TITLE=" + driver.getTitle());
     }
+
+    private String getOrigin() {
+        try {
+            java.net.URL u = new java.net.URL(driver.getCurrentUrl());
+            int port = u.getPort();
+            String base = u.getProtocol() + "://" + u.getHost();
+            if (port != -1 && port != u.getDefaultPort()) base += ":" + port;
+            return base;
+        } catch (Exception e) {
+            return "";
+        }
+    }
+
 
 
     // ---- helpers ----
