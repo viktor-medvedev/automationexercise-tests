@@ -35,6 +35,15 @@ public class HomePage extends BasePage {
 
     private final By categoryTitle = By.cssSelector("h2.title.text-center");
 
+    private final By recommendedItemsHeader =
+            By.xpath("//*[contains(translate(normalize-space(.),'abcdefghijklmnopqrstuvwxyz','ABCDEFGHIJKLMNOPQRSTUVWXYZ'),'RECOMMENDED ITEMS')]");
+
+    private final By firstRecommendedAddToCart =
+            By.cssSelector("#recommended-item-carousel a.add-to-cart");
+
+    private final By viewCartLink = By.xpath("//a[contains(.,'View Cart')]");
+
+
 
     public HomePage(WebDriver driver) {
         super(driver);
@@ -153,6 +162,27 @@ public class HomePage extends BasePage {
         } catch (Exception e) {
             driver.get(href);
         }
+    }
+
+    public void scrollToRecommendedItems() {
+        scrollToBottom(); // у тебя уже есть в BasePage
+    }
+
+    public void waitRecommendedItemsVisible() {
+        waitVisible(recommendedItemsHeader);
+        waitPresent(firstRecommendedAddToCart);
+    }
+
+    public void addFirstRecommendedItemToCartAndOpenCart() {
+        // клик по Add to cart в recommended блоке
+        scrollIntoView(firstRecommendedAddToCart);
+        click(firstRecommendedAddToCart);
+
+        // модалка
+        waitVisible(viewCartLink);
+        click(viewCartLink);
+
+        waitUntilTrue(d -> d.getCurrentUrl().contains("/view_cart"), 10);
     }
 
 
