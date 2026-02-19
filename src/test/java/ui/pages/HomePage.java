@@ -9,6 +9,7 @@ public class HomePage extends BasePage {
     private final By subscribeEmail = By.id("susbscribe_email");
     private final By subscribeBtn = By.id("subscribe");
     private final By subscribeSuccess = By.cssSelector(".alert-success");
+    private final By signupLoginLink = By.xpath("//a[contains(.,'Signup / Login')]");
 
     private final By loggedInAs =
             By.xpath("//*[contains(text(),'Logged in as')]");
@@ -23,6 +24,11 @@ public class HomePage extends BasePage {
     public HomePage open(String baseUrl) {
         driver.get(baseUrl + "/");
         return this;
+    }
+
+    public void openSignupLogin() {
+        click(signupLoginLink);
+        waitUntilTrue(d -> d.getCurrentUrl().contains("/login"), 10);
     }
 
     public boolean isLoggedInAsVisible() {
