@@ -22,6 +22,8 @@ public class CartPage extends BasePage {
     private final By emptyCartText =
             By.xpath("//*[contains(.,'Cart is empty')]");
 
+
+
     public CartPage(WebDriver driver) {
         super(driver);
     }

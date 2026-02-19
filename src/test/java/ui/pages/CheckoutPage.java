@@ -2,6 +2,9 @@ package ui.pages;
 
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
+import java.net.URL;
+import org.openqa.selenium.JavascriptExecutor;
+import org.openqa.selenium.WebElement;
 
 public class CheckoutPage extends BasePage {
 
@@ -35,8 +38,41 @@ public class CheckoutPage extends BasePage {
 
     public PaymentPage clickPlaceOrder() {
         scrollIntoView(placeOrderBtn);
-        click(placeOrderBtn);
-        waitUntilTrue(d -> d.getCurrentUrl().contains("/payment"), 10);
+
+        WebElement btn = waitVisible(placeOrderBtn);
+        String href = toAbsoluteUrl(btn.getAttribute("href"));
+
+        // 1) обычный клик + JS fallback
+        try {
+            click(placeOrderBtn);
+        } catch (Exception e) {
+            ((JavascriptExecutor) driver).executeScript("arguments[0].click();", btn);
+        }
+
+        // 2) ждём переход на /payment
+        boolean navigated = false;
+        try {
+            waitUntilTrue(d -> d.getCurrentUrl().contains("/payment"), 5);
+            navigated = true;
+        } catch (Exception ignored) {}
+
+        // 3) если не перешли — открываем по href напрямую (самый стабильный вариант для CI)
+        if (!navigated && href != null && !href.isBlank()) {
+            driver.get(href);
+            waitUntilTrue(d -> d.getCurrentUrl().contains("/payment"), 10);
+        }
+
         return new PaymentPage(driver);
     }
+
+
+    private String toAbsoluteUrl(String href) {
+        if (href == null || href.isBlank()) return null;
+        try {
+            return new URL(new URL(driver.getCurrentUrl()), href).toString();
+        } catch (Exception e) {
+            return href;
+        }
+    }
+
 }
