@@ -15,6 +15,8 @@ import org.openqa.selenium.support.ui.WebDriverWait;
 public abstract class BasePage {
     protected final WebDriver driver;
     protected final WebDriverWait wait;
+    private final By scrollUpArrow = By.id("scrollUp");
+
 
     protected BasePage(WebDriver driver) {
         this.driver = driver;
@@ -101,4 +103,38 @@ public abstract class BasePage {
         }
         click(locator);
     }
+
+    protected long getScrollY() {
+        return (Long) ((JavascriptExecutor) driver).executeScript("return window.pageYOffset;");
+    }
+
+    protected void waitScrolledToTop(int timeoutSec) {
+        waitUntilTrue(d -> {
+            long y = (Long) ((JavascriptExecutor) d).executeScript("return window.pageYOffset;");
+            return y < 50;
+        }, timeoutSec);
+    }
+
+    public void waitScrollUpArrowVisible() {
+        waitPresent(scrollUpArrow);
+    }
+
+    public void clickScrollUpArrow() {
+        click(scrollUpArrow);
+    }
+
+    public void scrollToBottomPage() {
+        scrollToBottom();
+    }
+
+    public long currentScrollY() {
+        return getScrollY();
+    }
+
+    public void waitTop() {
+        waitScrolledToTop(10);
+    }
+
+
+
 }
