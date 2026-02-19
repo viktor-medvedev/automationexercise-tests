@@ -4,47 +4,40 @@ import org.openqa.selenium.*;
 import org.openqa.selenium.interactions.Actions;
 
 import java.util.List;
+import java.net.URL;
+import org.openqa.selenium.WebElement;
 
 public class ProductsPage extends BasePage {
 
-    // =========================
-    // Locators: page anchors
-    // =========================
     private final By productsList = By.cssSelector(".features_items");
     private final By anyViewProduct = By.xpath("//a[contains(.,'View Product')]");
     private final By firstViewProduct = By.xpath("(//a[contains(.,'View Product')])[1]");
 
-    // Product detail page
     private final By productInfoBlock = By.cssSelector(".product-information");
     private final By productName = By.cssSelector(".product-information h2");
 
-    // Search
     private final By searchInput = By.id("search_product");
     private final By searchButton = By.id("submit_search");
     private final By searchedProductsHeader = By.xpath(
             "//*[contains(translate(normalize-space(.),'abcdefghijklmnopqrstuvwxyz','ABCDEFGHIJKLMNOPQRSTUVWXYZ'),'SEARCHED PRODUCTS')]"
     );
 
-    // =========================
-    // Locators: cart / modal
-    // =========================
+
     private final By cartLink = By.xpath("//a[contains(.,'Cart')]");
     private final By continueShoppingBtn = By.xpath("//button[contains(.,'Continue Shopping')]");
     private final By viewCartLink = By.xpath("//a[contains(.,'View Cart')]");
 
-    // Modal/backdrop часто мешают клику / второму добавлению
     private final By modalBackdrop = By.cssSelector(".modal-backdrop");
     private final By modalDialog = By.cssSelector(".modal-content");
 
-    // =========================
-    // Locators: add to cart (stable)
-    // =========================
-    // Самый стабильный путь на automationexercise — по data-product-id
     private final By addProduct1 = By.cssSelector("a.add-to-cart[data-product-id='1']");
     private final By addProduct2 = By.cssSelector("a.add-to-cart[data-product-id='2']");
 
-    // Fallback: все видимые add-to-cart на странице (иногда в DOM много скрытых)
     private final By addToCartVisibleButtons = By.cssSelector("a.add-to-cart");
+
+    private final By brandsBlock = By.cssSelector(".brands_products");
+    private final By listingTitle = By.cssSelector("h2.title.text-center");
+
 
     public ProductsPage(WebDriver driver) {
         super(driver);
@@ -199,5 +192,36 @@ public class ProductsPage extends BasePage {
         waitUntilTrue(d -> d.findElements(modalBackdrop).isEmpty(), 10);
         // и на всякий случай модалку
         waitUntilTrue(d -> d.findElements(modalDialog).isEmpty(), 10);
+    }
+
+    public void waitBrandsVisible() {
+        waitVisible(brandsBlock);
+    }
+
+    private By brandLink(String brandName) {
+        String up = brandName.toUpperCase();
+        return By.xpath("//div[contains(@class,'brands-name')]//a[" +
+                "contains(translate(normalize-space(.),'abcdefghijklmnopqrstuvwxyz','ABCDEFGHIJKLMNOPQRSTUVWXYZ'),'" + up + "')]");
+    }
+
+    public void openBrand(String brandName) {
+        waitBrandsVisible();
+
+        WebElement link = waitVisible(brandLink(brandName));
+        String href = link.getAttribute("href");
+
+        // на всякий случай делаем абсолютный URL
+        try {
+            String abs = new URL(new URL(driver.getCurrentUrl()), href).toString();
+            driver.get(abs);
+        } catch (Exception e) {
+            driver.get(href);
+        }
+
+        waitUntilTrue(d -> d.getCurrentUrl().contains("/brand_products/"), 10);
+    }
+
+    public String getListingTitle() {
+        return waitVisible(listingTitle).getText().trim();
     }
 }
