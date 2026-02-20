@@ -99,7 +99,24 @@ public class ProductsPage extends BasePage {
     // Actions
     // =========================
     public void openFirstProduct() {
-        click(firstViewProduct);
+        WebElement link = waitVisible(firstViewProduct);
+        String href = link.getAttribute("href");
+
+        try {
+            if (href != null && !href.isBlank()) {
+                // делаем абсолютный url, даже если href относительный
+                String abs = new URL(new URL(driver.getCurrentUrl()), href).toString();
+                driver.get(abs);
+            } else {
+                // fallback если href вдруг пустой
+                jsClick(firstViewProduct);
+            }
+        } catch (Exception e) {
+            jsClick(firstViewProduct);
+        }
+
+        // гарантируем, что реально ушли на detail
+        waitUntilTrue(d -> d.getCurrentUrl().contains("/product_details"), 10);
     }
 
     public ProductsPage search(String query) {

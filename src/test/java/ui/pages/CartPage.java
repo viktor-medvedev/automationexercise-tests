@@ -19,6 +19,7 @@ public class CartPage extends BasePage {
             By.cssSelector("#cart_info_table tbody tr[id^='product-']:first-child a.cart_quantity_delete");
 
 
+
     private final By emptyCartText =
             By.xpath("//*[contains(.,'Cart is empty')]");
 
