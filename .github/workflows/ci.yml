@@ -15,9 +15,8 @@ concurrency:
   cancel-in-progress: false
 
 jobs:
-  tests:
+  api-tests:
     runs-on: ubuntu-latest
-
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -29,11 +28,30 @@ jobs:
           java-version: "17"
           cache: maven
 
-      - name: Run tests
+      - name: Run API tests
+        run: mvn "-Dsurefire.suiteXmlFiles=testng-api.xml" test
+        env:
+          API_BASE_URL: https://automationexercise.com
+
+  ui-tests:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Java
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: "17"
+          cache: maven
+
+      - name: Run UI tests
+        id: ui
+        continue-on-error: true
         run: mvn test
         env:
           BASE_URL: https://automationexercise.com
-          API_BASE_URL: https://automationexercise.com
           HEADLESS: "true"
 
       - name: Upload allure-results (raw)
@@ -70,9 +88,13 @@ jobs:
         with:
           path: target/allure-report
 
+      - name: Fail job if UI tests failed
+        if: steps.ui.outcome == 'failure'
+        run: exit 1
+
   deploy:
-    if: github.ref == 'refs/heads/main'
-    needs: tests
+    if: always() && github.ref == 'refs/heads/main'
+    needs: [api-tests, ui-tests]
     runs-on: ubuntu-latest
 
     environment:
