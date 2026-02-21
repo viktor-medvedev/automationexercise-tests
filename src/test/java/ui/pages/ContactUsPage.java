@@ -8,7 +8,7 @@ import org.openqa.selenium.WebDriver;
 
 public class ContactUsPage extends BasePage {
 
-    private final By contactUsLink = By.xpath("//a[contains(.,'Contact us')]");
+    private final By contactUsLink = By.cssSelector("a[href='/contact_us']");
     private final By getInTouchHeader =
             By.xpath("//*[contains(translate(normalize-space(.),'abcdefghijklmnopqrstuvwxyz','ABCDEFGHIJKLMNOPQRSTUVWXYZ'),'GET IN TOUCH')]");
 

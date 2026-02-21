@@ -50,6 +50,9 @@ public class PaymentPage extends BasePage {
     public OrderPlacedPage payAndConfirm() {
         scrollIntoView(payBtn);
         click(payBtn);
+
+        OrderPlacedPage done = new OrderPlacedPage(driver);
+        done.waitOpened();
         return new OrderPlacedPage(driver);
     }
 
