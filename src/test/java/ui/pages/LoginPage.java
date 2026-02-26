@@ -15,12 +15,10 @@ public class LoginPage extends BasePage {
     private final By incorrectCredsError =
             By.xpath("//*[contains(translate(normalize-space(.),'abcdefghijklmnopqrstuvwxyz','ABCDEFGHIJKLMNOPQRSTUVWXYZ'),'YOUR EMAIL OR PASSWORD IS INCORRECT')]");
 
-    // Signup (New User Signup!)
     private final By signupNameInput = By.cssSelector("input[data-qa='signup-name']");
     private final By signupEmailInput = By.cssSelector("input[data-qa='signup-email']");
     private final By signupButton = By.cssSelector("button[data-qa='signup-button']");
 
-    // Post-login indicator (sometimes easier than "Logged in as")
     private final By logoutLink = By.xpath("//a[contains(.,'Logout')]");
 
     public LoginPage(WebDriver driver) {
@@ -35,7 +33,6 @@ public class LoginPage extends BasePage {
     public boolean isLoginBlockVisible() {
         return isPresent(loginHeader);
     }
-
 
     public LoginPage login(String email, String password) {
         waitVisible(emailInput);
@@ -52,7 +49,6 @@ public class LoginPage extends BasePage {
             jsClick(loginButton);
         }
 
-        // Wait: page changed OR we are logged in OR we see an error
         waitUntilTrue(d ->
                         !d.getCurrentUrl().equals(beforeUrl)
                                 || !d.findElements(logoutLink).isEmpty()
@@ -74,7 +70,6 @@ public class LoginPage extends BasePage {
         String beforeUrl = driver.getCurrentUrl();
         click(signupButton);
 
-        // ждём, что URL сменится (обычно на /signup)
         waitUntilTrue(d -> !d.getCurrentUrl().equals(beforeUrl), 10);
 
         return new SignupPage(driver);

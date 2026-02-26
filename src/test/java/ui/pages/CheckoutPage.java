@@ -14,16 +14,13 @@ public class CheckoutPage extends BasePage {
     private final By reviewYourOrderHeader =
             By.xpath("//*[contains(translate(normalize-space(.),'abcdefghijklmnopqrstuvwxyz','ABCDEFGHIJKLMNOPQRSTUVWXYZ'),'REVIEW YOUR ORDER')]");
 
-    // Comment textarea (на сайте это поле под текстом про comment)
     private final By commentTextArea =
             By.xpath("//textarea[@name='message' or @id='comment' or contains(@class,'form-control')]");
 
-    // Place Order button
     private final By placeOrderBtn = By.xpath("//a[contains(normalize-space(.),'Place Order')]");
 
     private final By deliveryAddressBlock = By.id("address_delivery");
     private final By billingAddressBlock = By.id("address_invoice");
-
 
     public CheckoutPage(WebDriver driver) {
         super(driver);
@@ -46,21 +43,18 @@ public class CheckoutPage extends BasePage {
         WebElement btn = waitVisible(placeOrderBtn);
         String href = toAbsoluteUrl(btn.getAttribute("href"));
 
-        // 1) обычный клик + JS fallback
         try {
             click(placeOrderBtn);
         } catch (Exception e) {
             ((JavascriptExecutor) driver).executeScript("arguments[0].click();", btn);
         }
 
-        // 2) ждём переход на /payment
         boolean navigated = false;
         try {
             waitUntilTrue(d -> d.getCurrentUrl().contains("/payment"), 5);
             navigated = true;
         } catch (Exception ignored) {}
 
-        // 3) если не перешли — открываем по href напрямую (самый стабильный вариант для CI)
         if (!navigated && href != null && !href.isBlank()) {
             driver.get(href);
             waitUntilTrue(d -> d.getCurrentUrl().contains("/payment"), 10);
@@ -68,7 +62,6 @@ public class CheckoutPage extends BasePage {
 
         return new PaymentPage(driver);
     }
-
 
     private String toAbsoluteUrl(String href) {
         if (href == null || href.isBlank()) return null;
@@ -86,6 +79,5 @@ public class CheckoutPage extends BasePage {
     public String getBillingAddressText() {
         return waitVisible(billingAddressBlock).getText();
     }
-
 
 }

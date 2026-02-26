@@ -15,7 +15,6 @@ public class VerifyAddressDetailsInCheckoutTest extends BaseUiTest {
         String email = TestData.uniqueEmail();
         String password = TestData.password();
 
-        // Register
         LoginPage loginPage = new LoginPage(driver).open(baseUrl);
         SignupPage signup = loginPage.startSignup(TestData.name(), email);
 
@@ -23,21 +22,18 @@ public class VerifyAddressDetailsInCheckoutTest extends BaseUiTest {
         Assert.assertFalse(signup.isEmailExistsErrorVisible(), "Unexpected: email already exists: " + email);
 
         signup.fillAccountInfo(password)
-                .fillAddressInfo()   // тут как раз должны подставляться user.* из properties
+                .fillAddressInfo()
                 .createAccount()
                 .waitForContinueButton();
 
         signup.clickContinue();
 
-        // Add product -> cart -> checkout
         ProductsPage products = new ProductsPage(driver).open(baseUrl);
         products.waitAllProductsVisible();
         products.addFirstProductToCartAndContinue();
 
-// вместо products.openCart()
         CartPage cart = new CartPage(driver).open(baseUrl);
         cart.waitCartVisible();
-
 
         CheckoutPage checkout = cart.proceedToCheckout();
         checkout.waitCheckoutVisible();
@@ -45,7 +41,6 @@ public class VerifyAddressDetailsInCheckoutTest extends BaseUiTest {
         String delivery = checkout.getDeliveryAddressText();
         String billing = checkout.getBillingAddressText();
 
-        // Минимальные must-have проверки (твои данные из user.properties)
         assertContains(delivery, "Viktor");
         assertContains(delivery, "Medvedev");
         assertContains(delivery, "Niceville");

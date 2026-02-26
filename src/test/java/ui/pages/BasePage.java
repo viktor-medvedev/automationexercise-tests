@@ -17,7 +17,6 @@ public abstract class BasePage {
     protected final WebDriverWait wait;
     private final By scrollUpArrow = By.id("scrollUp");
 
-
     protected BasePage(WebDriver driver) {
         this.driver = driver;
         this.wait = new WebDriverWait(driver, Duration.ofSeconds(20));
@@ -94,7 +93,6 @@ public abstract class BasePage {
         }
     }
 
-    // Иногда элементы "протухают" на динамических страницах
     protected void clickRetryingStale(By locator) {
         int attempts = 0;
         while (attempts < 2) {
@@ -138,7 +136,5 @@ public abstract class BasePage {
     public void waitTop() {
         waitScrolledToTop(10);
     }
-
-
 
 }

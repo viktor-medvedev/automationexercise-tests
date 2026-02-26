@@ -50,7 +50,7 @@ public class ContactUsPage extends BasePage {
         try {
             Path tmp = Files.createTempFile("ae-upload-", ".txt");
             Files.writeString(tmp, "hello from automation");
-            // Для upload всегда sendKeys абсолютный путь
+
             find(uploadFileInput).sendKeys(tmp.toAbsolutePath().toString());
         } catch (Exception e) {
             throw new RuntimeException("Failed to create/upload temp file", e);
@@ -60,7 +60,7 @@ public class ContactUsPage extends BasePage {
 
     public ContactUsPage submitAndAcceptAlert() {
         click(submitBtn);
-        // На сайте появляется JS alert "Press OK to proceed!"
+
         driver.switchTo().alert().accept();
         driver.switchTo().defaultContent();
         return this;

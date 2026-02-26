@@ -27,5 +27,4 @@ public class ProductDetailPage extends BasePage {
         click(viewCartLink);
     }
 
-
 }

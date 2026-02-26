@@ -5,10 +5,8 @@ import org.openqa.selenium.WebDriver;
 
 public class PaymentPage extends BasePage {
 
-    // URL check
     private final String paymentPath = "/payment";
 
-    // Более устойчивые локаторы (data-qa + name)
     private final By nameOnCard  = By.cssSelector("input[data-qa='name-on-card'], input[name='name_on_card']");
     private final By cardNumber  = By.cssSelector("input[data-qa='card-number'], input[name='card_number']");
     private final By cvc         = By.cssSelector("input[data-qa='cvc'], input[name='cvc']");
@@ -24,7 +22,6 @@ public class PaymentPage extends BasePage {
     public void waitPaymentFormReady() {
         waitUntilTrue(d -> d.getCurrentUrl().contains(paymentPath), 10);
 
-        // если страница подгрузилась криво — refresh помогает
         if (driver.findElements(nameOnCard).isEmpty()) {
             driver.navigate().refresh();
             waitUntilTrue(d -> d.getCurrentUrl().contains(paymentPath), 10);
@@ -60,12 +57,11 @@ public class PaymentPage extends BasePage {
         String origin = getOrigin();
 
         for (int i = 0; i < 3; i++) {
-            // если мы не на /payment — идём напрямую
+
             if (!driver.getCurrentUrl().contains("/payment")) {
                 driver.get(origin + "/payment");
             }
 
-            // ждём появления полей коротко
             try {
                 waitUntilTrue(d -> !d.findElements(nameOnCard).isEmpty(), 5);
                 waitUntilTrue(d -> !d.findElements(cardNumber).isEmpty(), 5);
@@ -91,9 +87,6 @@ public class PaymentPage extends BasePage {
         }
     }
 
-
-
-    // ---- helpers ----
     private void setValue(By locator, String value) {
         WebElement el = waitPresent(locator);
         scrollIntoView(locator);
@@ -102,7 +95,7 @@ public class PaymentPage extends BasePage {
             el.clear();
             el.sendKeys(value);
         } catch (Exception e) {
-            // JS fallback (если элемент не interactable в headless/оверлей)
+
             ((JavascriptExecutor) driver).executeScript(
                     "arguments[0].value = arguments[1];" +
                             "arguments[0].dispatchEvent(new Event('input', {bubbles:true}));" +

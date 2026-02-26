@@ -5,16 +5,13 @@ import org.openqa.selenium.WebDriver;
 
 public class OrderPlacedPage extends BasePage {
 
-    // стабильный якорь, если есть
     private final By orderPlacedQa = By.cssSelector("[data-qa='order-placed']");
 
-    // твой текущий fallback
     private final By orderPlacedHeader =
             By.xpath("//*[contains(translate(normalize-space(.),'abcdefghijklmnopqrstuvwxyz','ABCDEFGHIJKLMNOPQRSTUVWXYZ'),'ORDER PLACED')]");
 
     private final By continueBtn = By.cssSelector("a[data-qa='continue-button']");
 
-    // стабильнее по href, чем по тексту
     private final By downloadInvoiceBtn = By.cssSelector("a[href*='download_invoice']");
 
     public OrderPlacedPage(WebDriver driver) {
@@ -31,7 +28,6 @@ public class OrderPlacedPage extends BasePage {
                 20
         );
 
-        // если всё ещё не похоже на success page — дадим полезную ошибку
         if (!driver.getCurrentUrl().contains("payment_done")
                 && driver.findElements(orderPlacedQa).isEmpty()
                 && driver.findElements(downloadInvoiceBtn).isEmpty()
@@ -41,7 +37,6 @@ public class OrderPlacedPage extends BasePage {
         }
     }
 
-    // оставляем старое имя, но пусть оно вызывает новый гейт
     public void waitOrderPlacedVisible() {
         waitOpened();
     }

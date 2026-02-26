@@ -17,7 +17,6 @@ public class PlaceOrderRegisterBeforeCheckoutTest extends BaseUiTest {
     public void placeOrderRegisterBeforeCheckout() {
         String baseUrl = TestConfig.baseUrl();
 
-        // 1) Register new user (before cart/checkout)
         String email = TestData.uniqueEmail();
         String password = TestData.password();
 
@@ -37,12 +36,10 @@ public class PlaceOrderRegisterBeforeCheckoutTest extends BaseUiTest {
         HomePage home = new HomePage(driver);
         home.waitLoggedInAs();
 
-        // 2) Add product to cart
         ProductsPage products = new ProductsPage(driver).open(baseUrl);
         products.waitAllProductsVisible();
         products.addFirstProductToCartAndContinue();
 
-        // 3) Proceed to checkout (already logged in)
         CartPage cart = new CartPage(driver).open(baseUrl);
         cart.waitCartVisible();
         Assert.assertTrue(cart.getItemsCount() >= 1, "Precondition failed: cart should have item(s)");

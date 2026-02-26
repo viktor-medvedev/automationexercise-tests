@@ -15,7 +15,6 @@ public class ScrollUpWithoutArrowTest extends BaseUiTest {
         home.scrollToBottomPage();
         Assert.assertTrue(home.currentScrollY() > 200, "Expected page to be scrolled down");
 
-        // без стрелки — просто скроллим наверх
         home.scrollToTopPage();
         home.waitTop();
 

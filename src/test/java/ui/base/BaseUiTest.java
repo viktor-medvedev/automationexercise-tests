@@ -17,8 +17,6 @@ import org.testng.annotations.AfterMethod;
 import java.io.ByteArrayInputStream;
 import java.nio.charset.StandardCharsets;
 
-
-
 @Listeners({AllureTestNg.class})
 public class BaseUiTest {
     protected WebDriver driver;
@@ -49,18 +47,15 @@ public class BaseUiTest {
     public void attachArtifactsOnFailure(ITestResult result) {
         if (result.getStatus() == ITestResult.FAILURE && driver != null) {
 
-            // URL
             try {
                 Allure.addAttachment("URL", driver.getCurrentUrl());
             } catch (Exception ignored) {}
 
-            // Screenshot
             try {
                 byte[] png = ((TakesScreenshot) driver).getScreenshotAs(OutputType.BYTES);
                 Allure.addAttachment("Screenshot", "image/png", new ByteArrayInputStream(png), ".png");
             } catch (Exception ignored) {}
 
-            // Page source (HTML)
             try {
                 String html = driver.getPageSource();
                 Allure.addAttachment(

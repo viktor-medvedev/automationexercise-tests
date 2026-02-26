@@ -16,7 +16,6 @@ public class ProductsAndDetailsTest extends BaseUiTest {
 
         products.openFirstProduct();
 
-        // Проверка, что страница деталей реально открылась и есть блок с инфой
         products.waitProductDetailVisible();
         Assert.assertTrue(products.isProductNameVisible(), "Product name is not visible on details page");
     }

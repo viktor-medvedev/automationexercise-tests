@@ -29,7 +29,6 @@ public class ConfigReader {
         return val;
     }
 
-
     public static String getOrDefault(String key, String defaultValue) {
         String sys = System.getProperty(key);
         if (sys != null && !sys.isBlank()) return sys;

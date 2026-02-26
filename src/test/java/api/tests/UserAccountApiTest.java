@@ -40,7 +40,7 @@ public class UserAccountApiTest extends BaseApiTest {
         user.put("mobile_number", "1234567890");
 
         try {
-            // 11) createAccount -> responseCode 201
+
             var create =
                     given()
                             .contentType(ContentType.URLENC)
@@ -54,7 +54,6 @@ public class UserAccountApiTest extends BaseApiTest {
             Assert.assertEquals(create.getInt("responseCode"), 201,
                     "Create failed: " + create.getString("message"));
 
-            // 13) getUserDetailByEmail -> responseCode 200
             var get1 =
                     given()
                             .queryParam("email", email)
@@ -65,11 +64,10 @@ public class UserAccountApiTest extends BaseApiTest {
                             .extract().jsonPath();
 
             Assert.assertEquals(get1.getInt("responseCode"), 200);
-            // мягкие проверки на соответствие
+
             Assert.assertTrue(get1.getString("user.email").equalsIgnoreCase(email),
                     "Email mismatch in user detail");
 
-            // 12) updateAccount -> responseCode 200
             user.put("city", "Destin");
             var upd =
                     given()
@@ -84,7 +82,6 @@ public class UserAccountApiTest extends BaseApiTest {
             Assert.assertEquals(upd.getInt("responseCode"), 200,
                     "Update failed: " + upd.getString("message"));
 
-            // 13) getUserDetailByEmail again -> убедимся, что обновилось (если поле возвращается)
             var get2 =
                     given()
                             .queryParam("email", email)
@@ -102,7 +99,7 @@ public class UserAccountApiTest extends BaseApiTest {
             }
 
         } finally {
-            // 14) deleteAccount -> responseCode 200 (cleanup обязателен)
+
             var del =
                     given()
                             .contentType(ContentType.URLENC)

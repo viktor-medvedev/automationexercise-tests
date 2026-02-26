@@ -5,7 +5,6 @@ import org.openqa.selenium.WebDriver;
 
 public class TestCasesPage extends BasePage {
 
-    // Реальный заголовок страницы (а не пункт меню)
     private final By pageTitle = By.cssSelector("h2.title.text-center");
 
     public TestCasesPage(WebDriver driver) {
@@ -21,7 +20,6 @@ public class TestCasesPage extends BasePage {
     public void waitHeaderVisible() {
         waitVisible(pageTitle);
 
-        // ждём, что именно на странице "TEST CASES"
         waitUntilTrue(d -> {
             try {
                 String t = d.findElement(pageTitle).getText().toUpperCase();

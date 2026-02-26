@@ -17,7 +17,6 @@ public class PlaceOrderRegisterWhileCheckoutTest extends BaseUiTest {
     public void placeOrderRegisterWhileCheckout() {
         String baseUrl = TestConfig.baseUrl();
 
-        // 1) Add product to cart
         ProductsPage products = new ProductsPage(driver).open(baseUrl);
         products.waitAllProductsVisible();
         products.addFirstProductToCartAndContinue();
@@ -26,16 +25,11 @@ public class PlaceOrderRegisterWhileCheckoutTest extends BaseUiTest {
         cart.waitCartVisible();
         Assert.assertTrue(cart.getItemsCount() >= 1, "Precondition failed: cart should have item(s)");
 
-        // 2) Proceed to checkout (guest) -> should require login/signup
-        // (если у тебя есть метод checkout в CartPage — используй его.
-        // если нет — нажимаем по тексту)
         cart.proceedToCheckout();
 
-        // 3) On checkout/login step: go to Signup/Login
         HomePage home = new HomePage(driver);
         home.openSignupLogin();
 
-        // 4) Register new user
         String email = TestData.uniqueEmail();
         String password = TestData.password();
 
@@ -52,7 +46,6 @@ public class PlaceOrderRegisterWhileCheckoutTest extends BaseUiTest {
         signup.waitForContinueButton();
         signup.clickContinue();
 
-        // 5) Return to cart/checkout and verify we can proceed (logged in)
         home.waitLoggedInAs();
 
         CartPage cart2 = new CartPage(driver).open(baseUrl);

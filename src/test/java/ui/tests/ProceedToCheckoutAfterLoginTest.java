@@ -14,7 +14,6 @@ public class ProceedToCheckoutAfterLoginTest extends BaseUiTest {
         String email = TestData.uniqueEmail();
         String password = TestData.password();
 
-        // Register (чтобы тест был автономным)
         LoginPage loginPage = new LoginPage(driver).open(TestConfig.baseUrl());
         SignupPage signup = loginPage.startSignup(TestData.name(), email);
 
@@ -28,10 +27,8 @@ public class ProceedToCheckoutAfterLoginTest extends BaseUiTest {
 
         signup.clickContinue();
 
-        // Logout
         new HomePage(driver).open(TestConfig.baseUrl()).logout();
 
-        // Login
         loginPage = new LoginPage(driver).open(TestConfig.baseUrl());
         loginPage.login(email, password);
 
@@ -39,7 +36,6 @@ public class ProceedToCheckoutAfterLoginTest extends BaseUiTest {
         home.waitLoggedInAs();
         Assert.assertTrue(home.isLoggedInAsVisible(), "Not logged in after login");
 
-        // Add product -> Cart -> Checkout
         ProductsPage products = new ProductsPage(driver).open(TestConfig.baseUrl());
         products.waitAllProductsVisible();
         products.addFirstProductToCartAndContinue();

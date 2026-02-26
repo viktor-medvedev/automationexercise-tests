@@ -18,12 +18,8 @@ public class CartPage extends BasePage {
     private final By firstDeleteBtn =
             By.cssSelector("#cart_info_table tbody tr[id^='product-']:first-child a.cart_quantity_delete");
 
-
-
     private final By emptyCartText =
             By.xpath("//*[contains(.,'Cart is empty')]");
-
-
 
     public CartPage(WebDriver driver) {
         super(driver);
@@ -45,7 +41,6 @@ public class CartPage extends BasePage {
                 20
         );
     }
-
 
     public int getItemsCount() {
         return driver.findElements(cartRows).size();
@@ -91,7 +86,5 @@ public class CartPage extends BasePage {
     public boolean waitUntilHasItems(int minItems) {
         return waitUntilTrue(d -> d.findElements(cartRows).size() >= minItems, 15);
     }
-
-
 
 }

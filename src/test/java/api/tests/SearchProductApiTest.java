@@ -30,7 +30,6 @@ public class SearchProductApiTest extends BaseApiTest {
         Assert.assertNotNull(products, "products is null");
         Assert.assertTrue(products.size() > 0, "No products returned for search");
 
-        // мягкая контрактная проверка на первый элемент
         Map<String, Object> first = products.get(0);
         Assert.assertNotNull(first.get("id"));
         Assert.assertNotNull(first.get("name"));

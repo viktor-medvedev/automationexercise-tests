@@ -7,9 +7,6 @@ import ui.base.BaseUiTest;
 import ui.pages.*;
 import utils.TestData;
 
-import java.io.File;
-import java.time.Duration;
-
 public class DownloadInvoiceAfterPurchaseTest extends BaseUiTest {
 
     @Test

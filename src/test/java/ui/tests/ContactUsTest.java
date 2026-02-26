@@ -25,7 +25,6 @@ public class ContactUsTest extends BaseUiTest {
 
         page.waitForSuccess();
 
-        // Мини-проверка: после Home мы реально на главной
         page.goHome();
         Assert.assertTrue(driver.getCurrentUrl().contains("/"), "Expected to be on Home page");
     }

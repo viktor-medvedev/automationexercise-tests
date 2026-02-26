@@ -15,7 +15,6 @@ public class VerifyQuantityInCartTest extends BaseUiTest {
         ProductsPage products = new ProductsPage(driver).open(TestConfig.baseUrl());
         products.waitAllProductsVisible();
 
-        // Открываем детальную страницу первого товара
         products.openFirstProduct();
 
         ProductDetailPage detail = new ProductDetailPage(driver);

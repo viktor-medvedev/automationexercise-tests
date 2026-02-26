@@ -17,7 +17,6 @@ public class SearchProductsVerifyCartAfterLoginTest extends BaseUiTest {
     public void searchProductsAndVerifyCartAfterLogin() {
         String baseUrl = TestConfig.baseUrl();
 
-        // 1) Create account (so login definitely works)
         String email = TestData.uniqueEmail();
         String password = TestData.password();
 
@@ -36,22 +35,19 @@ public class SearchProductsVerifyCartAfterLoginTest extends BaseUiTest {
         signup.clickContinue();
 
         HomePage home = new HomePage(driver);
-        home.waitLoggedInAs();   // у тебя есть алиас на waitLoggedInAsVisible()
+        home.waitLoggedInAs();
         home.logout();
 
-        // 2) Guest: search + add to cart
         ProductsPage products = new ProductsPage(driver).open(baseUrl);
         products.search("Top");
         products.waitSearchedProductsVisible();
 
         products.addFirstProductToCartAndContinue();
 
-        // 3) Check cart has items before login
         CartPage cartBeforeLogin = new CartPage(driver).open(baseUrl);
         cartBeforeLogin.waitCartVisible();
         Assert.assertTrue(cartBeforeLogin.getItemsCount() >= 1, "Cart should have items before login");
 
-        // 4) Login and check cart keeps items
         HomePage header = new HomePage(driver);
         header.openSignupLogin();
 

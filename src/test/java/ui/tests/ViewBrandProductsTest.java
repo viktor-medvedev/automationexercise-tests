@@ -14,13 +14,11 @@ public class ViewBrandProductsTest extends BaseUiTest {
         products.waitAllProductsVisible();
         products.waitBrandsVisible();
 
-        // Brand 1
         products.openBrand("Polo");
         String title1 = products.getListingTitle().toUpperCase();
         Assert.assertTrue(title1.contains("BRAND") && title1.contains("POLO"),
                 "Unexpected brand title: " + products.getListingTitle());
 
-        // Brand 2
         products.openBrand("H&M");
         String title2 = products.getListingTitle().toUpperCase();
         Assert.assertTrue(title2.contains("BRAND") && title2.contains("H&M"),
